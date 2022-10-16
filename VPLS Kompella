@@ -1,0 +1,48 @@
+PE-1
+
+R1(config)#l2vpn vfi context Blue
+R1(config-vfi)#vpn id 63
+R1(config-vfi)#autodiscovery bgp signaling bgp 
+R1(config-vfi-autodiscovery)#ve id  101
+R1(config-vfi-autodiscovery)#exit
+R1(config-vfi)#exit
+R1(config)#bridge-domain 255
+R1(config-bdomain)#member vfi Blue
+R1(config-bdomain)#member gigabitEthernet 3 service-instance 10
+R1(config-bdomain-efp)#exit
+R1(config-bdomain)#exit
+R1(config)#int g3
+R1(config-if)#service instance 10 ethernet 
+R1(config-if-srv)#encapsulation default 
+
+R1(config)#router bgp 65000
+R1(config-router)#neighbor 190.0.0.1 remote-as 65000
+R1(config-router)#neighbor 190.0.0.1 update-source loo 1
+R1(config-router)#address-family l2vpn vpls 
+R1(config-router-af)#neighbor 190.0.0.1 activate 
+R1(config-router-af)#neighbor 190.0.0.1 send-community extended 
+R1(config-router-af)#neighbor 190.0.0.1 suppress-signaling-protocol ldp 
+
+PE-2
+
+R4(config)#l2vpn vfi Context Blue
+R4(config-vfi)#vpn id 63
+R4(config-vfi)#autodiscovery bgp signaling bgp 
+R4(config-vfi-autodiscovery)#ve id 104
+R4(config-vfi-autodiscovery)#exit
+R4(config-vfi)#exit
+R4(config)#bridge-domain 255
+R4(config-bdomain)#member vfi Blue
+R4(config-bdomain)#member gigabitEthernet 3 service-instance 13 
+R4(config-bdomain-efp)#exit
+R4(config)#int gig3
+R4(config-if)#service instance 13 ethernet 
+R4(config-if-srv)#encapsulation default 
+
+R4(config)#router bgp 65000
+R4(config-router)#neighbor 160.0.0.1 remote-as 65000
+R4(config-router)#neighbor 160.0.0.1 update-source loo 1
+R4(config-router)#address-family l2vpn vpls 
+R4(config-router-af)#neighbor 160.0.0.1 activate 
+R4(config-router-af)#neighbor 160.0.0.1 send-community extended 
+R4(config-router-af)#neighbor 160.0.0.1 suppress-signaling-protocol ldp
