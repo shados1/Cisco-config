@@ -1,0 +1,11 @@
+SW1(config)#spanning-tree mst configuration 
+SW1(config-mst)#revision 1
+SW1(config-mst)#instance 2 vlan 2-100
+SW1(config-mst)#instance 3 vlan 101-200
+SW1(config-mst)#instance 4 vlan 201-300
+SW1(config-mst)#instance 5 vlan 301-400
+SW1(config-mst)#exit
+SW1(config)#spanning-tree mst 2 priority 0
+SW1(config)#spanning-tree mst 3 priority 0
+SW1(config)#spanning-tree mst 4 priority 4096
+SW1(config)#spanning-tree mst 5 priority 4096
