@@ -1,0 +1,17 @@
+R4(config)#crypto isakmp policy 10
+R4(config-isakmp)#hash sha
+R4(config-isakmp)#authentication pre-share
+R4(config-isakmp)#group 5
+R4(config-isakmp)#lifetime 3600
+R4(config-isakmp)#encryption aes 256
+R4(config-isakmp)#exit
+R4(config)#crypto isakmp key 0 password address 80.0.0.1
+R4(config)#crypto ipsec transform-set T esp-aes 256 esp-sha-hmac
+R4(cfg-crypto-trans)#mode tunnel
+R4(cfg-crypto-trans)#exit
+R4(config)#crypto ipsec profile PROTECT
+R4(ipsec-profile)#set transform-set T
+R4(ipsec-profile)#exit
+R4(config)#int tunnel 1
+R4(config-if)#tunnel mode ipsec ipv4
+R4(config-if)#tunnel protection ipsec profile PROTECT
