@@ -1,0 +1,1 @@
+R34(config)#ip nat inside source list NAT pool POOL vrf 10 overload 
