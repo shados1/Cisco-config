@@ -1,0 +1,6 @@
+R1(config)#ip prefix-list OSPF seq 5 permit 170.0.0.0/7 ge 8
+R1(config)#route-map OSPF1
+R1(config-route-map)#match ip address prefix-list OSPF
+R1(config-route-map)#exit
+R1(config)#router bgp 65000
+R1(config-router)#redistribute ospf 1 route-map OSPF1
