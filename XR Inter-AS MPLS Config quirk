@@ -1,0 +1,10 @@
+Static route for next hop for ebgp
+RP/0/RP0/CPU0:P(config)#router static 
+RP/0/RP0/CPU0:P(config-static)#address-family ipv4  unicast 
+RP/0/RP0/CPU0:P(config-static-afi)#100.0.0.2/32 gigabitEthernet 0/0/0/3
+RP/0/RP0/CPU0:P(config-static-afi)#commit
+
+RP/0/RP0/CPU0:P(config)#router bgp 65000
+RP/0/RP0/CPU0:P(config-bgp)#address-family vpnv4 unicast 
+RP/0/RP0/CPU0:P(config-bgp-af)#retain route-target all
+RP/0/RP0/CPU0:P(config-bgp-af)#commit
