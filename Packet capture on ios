@@ -1,0 +1,10 @@
+shados-R1#monitor capture buffer CAP-BUFFER size 2048 linear
+shados-R1#monitor capture buffer CAP-BUFFER filter access-list 100
+shados-R1#monitor capture point ip cef CAP gigabitEthernet 0/1 both
+shados-R1#monitor capture point associate CAP CAP-BUFFER
+shados-R1#monitor capture point start CAP
+shados-R1#monitor capture point stop CAP
+shados-R1#monitor capture buffer CAP-BUFFER export tftp://172.31.1.6/capture.pcap
+shados-R1no monitor capture point ip cef CAP gigabitEthernet 0/1 both
+shados-R1no monitor capture buffer CAP-BUFFER
+shados-R1#show monitor capture buffer all parameter
