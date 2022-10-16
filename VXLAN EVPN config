@@ -1,0 +1,38 @@
+SPINE(config)# feature bgp 
+SPINE(config)# feature nv overlay 
+SPINE(config)# nv overlay evpn 
+SPINE(config)# int nve 1
+SPINE(config-if-nve)# host-reachability protocol bgp 
+SPINE(config-if-nve)# exit
+SPINE(config)# router bgp 65000
+SPINE(config-router)# address-family l2vpn evpn 
+SPINE(config-router-af)# retain route-target all
+SPINE(config-router)# nei 1.1.1.1
+SPINE(config-router-neighbor)# remote-as 65000
+SPINE(config-router-neighbor)# update-source loo 1
+SPINE(config-router-neighbor)# address-family l2vpn evpn 
+SPINE(config-router-neighbor-af)# send-community both 
+SPINE(config-router-neighbor-af)# route-reflector-client
+SPINE(config-router-neighbor-af)# evpn 
+SPINE(config-evpn)# vni 10010 l2 
+SPINE(config-evpn-evi)# rd auto 
+SPINE(config-evpn-evi)# route-target both auto 
+
+
+LEAF-3(config)# nv overlay evpn 
+LEAF-3(config)# int nve 1
+LEAF-3(config-if-nve)# host-reachability protocol bgp 
+LEAF-3(config-if-nve)# exit
+LEAF-3(config)# feature bgp 
+LEAF-3(config)# router bgp 65000
+LEAF-3(config-router)# address-family l2vpn evpn 
+LEAF-3(config-router-af)# exit
+LEAF-3(config-router)# nei 7.7.7.7
+LEAF-3(config-router-neighbor)# remote-as 65000
+LEAF-3(config-router-neighbor)# update-source loo 1
+LEAF-3(config-router-neighbor)# address-family l2vpn evpn 
+LEAF-3(config-router-neighbor-af)# send-community both 
+LEAF-3(config-router-neighbor-af)# evpn
+LEAF-3(config-evpn)# vni 10010 l2 
+LEAF-3(config-evpn-evi)# rd auto 
+LEAF-3(config-evpn-evi)# route-target both auto 
