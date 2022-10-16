@@ -1,0 +1,66 @@
+R1(config)#int tunnel 0
+R1(config-if)#ip add 192.168.0
+R1(config-if)#ip add 192.168.0.1 255.255.255.0
+R1(config-if)#tunnel source loopback 1
+R1(config-if)#tunnel destination 190.0.0.1
+R1(config-if)#exit
+R1(config)#ip vrf 1
+R1(config-vrf)#rd
+R1(config-vrf)#rd 65000:1
+R1(config-vrf)#exit
+R1(config)#ip vr
+R1(config)#ip vrf 2
+R1(config-vrf)#rd
+R1(config-vrf)#rd 65000:2
+R1(config-vrf)#exit
+R1(config)#int g0/0
+R1(config-if)#ip vrf forwarding 1
+R1(config-if)#ip add 50.0.0.1 255.255.255.0
+R1(config-if)#exit
+R1(config)#int loopback 1
+R1(config-if)#ip vrf forwarding 1
+R1(config-if)#ip add 160.0.0.1 255.255.255.0
+R1(config-if)#exit
+R1(config)#int tunnel 0
+R1(config-if)#ip vrf forwarding 1
+R1(config-if)#ip add 192.168.0.1 255.255.255.0
+*R1(config-if)#tunnel vrf 1
+R1(config-if)#exit
+R1(config)#int g1/0
+R1(config-if)#ip vrf forwarding 2
+R1(config-if)#ip add 200.0.0.1 255.255.255.0
+R1(config-if)#exit
+R1(config)#router  bgp 65000
+R1(config-router)#bgp router-id 1.1.1.1
+R1(config-router)#address-family ipv4  vrf 1
+R1(config-router-af)#neighbor 50.0.0.2 remote-as 64000
+R1(config-router-af)#network 50.0.0.0 mask 255.255.255.0
+R1(config-router-af)#network 160.0.0.0 mask 255.255.255.0
+R1(config-router-af)#exit
+R1(config-router)#address-family ipv4 vrf 2
+R1(config-router-af)#neighbor 200.0.0.2 remote-as 62000
+R1(config-router-af)#network 200.0.0.0 mask 255.255.255.0
+R1(config-router-af)#exit
+R1(config-router)#exit
+R1(config)#exit
+R1(config)#crypto isakmp policy 10
+R1(config-isakmp)#hash sha
+R1(config-isakmp)#authentication pre-share
+R1(config-isakmp)#group 16
+R1(config-isakmp)#lifetime 3600
+R1(config-isakmp)#encryption aes 256
+R1(config-isakmp)#exit
+R1(config)#crypto isakmp key 0 password address 190.0.0.1
+R1(config)#crypto isakmp peer address 190.0.0.1 vrf 1
+R1(config-isakmp-peer)#set aggressive-mode client-endpoint ipv4 190.0.0.1
+R1(config-isakmp-peer)#set aggressive-mode password password
+R1(config-isakmp-peer)#exit
+R1(config)#crypto ipsec transform-set T esp-aes 256 esp-sha-hmac
+R1(cfg-crypto-trans)#mode tunnel
+R1(cfg-crypto-trans)#exit
+R1(config)#crypto ipsec profile PROTECT
+R1(ipsec-profile)#set transform-set T
+R1(ipsec-profile)#exit
+R1(config)#int tunnel 0
+R1(config-if)#tunnel mode ipsec ipv4
+R1(config-if)#tunnel protection ipsec profile PROTECT
