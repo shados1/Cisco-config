@@ -1,0 +1,3 @@
+Instead of OSPF IGP:
+PE-1(config-router)#address-family ipv4 vrf A
+PE-1(config-router-af)#neighbor 51.0.0.2 remote-as 65000
