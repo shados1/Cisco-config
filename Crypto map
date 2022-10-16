@@ -1,0 +1,21 @@
+R6(config)#crypto isakmp policy 20
+R6(config-isakmp)#encryption aes 256 
+R6(config-isakmp)#authentication pre-share 
+R6(config-isakmp)#hash sha
+R6(config-isakmp)#group 16
+R6(config-isakmp)#exit
+R6(config)#crypto isakmp key 0 password address 0.0.0.0
+R6(config)#ip access-list extended 150
+R6(config-ext-nacl)#permit ip 50.0.0.0 0.0.0.255 200.0.0.0 0.0.0.255 
+R6(config-ext-nacl)#exit
+R6(config)#crypto ipsec transform-set T esp-aes 256 esp-sha-hmac 
+R6(cfg-crypto-trans)#mode transport 
+R6(cfg-crypto-trans)#exit
+R6(config)#crypto map CRYPTO 20 ipsec-isakmp 
+R6(config-crypto-map)#set peer 200.0.0.2
+R6(config-crypto-map)#set transform-set T
+R6(config-crypto-map)#match address 150
+R6(config-crypto-map)#exit
+R6(config)#int g1
+R6(config-if)#crypto map CRYPTO
+R6(config-if)#exit
