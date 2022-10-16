@@ -1,0 +1,5 @@
+
+ISP1(config)#int g2/0
+ISP1(config-if)#ip ospf 1 area 0
+ISP1(config-if)#ip ospf authentication message-digest
+ISP1(config-if)#ip ospf message-digest-key 1 md5 password
