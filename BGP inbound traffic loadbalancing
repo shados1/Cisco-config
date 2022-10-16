@@ -1,0 +1,35 @@
+Inbound traffic manipulation
+
+R1(config)#router bgp 65000
+R1(config-router)#network 120.0.0.0 mask 255.255.254.0
+R1(config-router)#network 120.0.0.0 mask 255.255.255.0
+R1(config-router)#network 120.0.1.0 mask 255.255.255.0
+R1(config-router)#exit
+R1(config)#ip route 120.0.1.0 255.255.255.0 null 0
+R1(config)#ip route 120.0.0.0 255.255.255.0 null 0
+R1(config)#exit
+R1(config)#ip prefix-list loop1 seq 5 permit 120.0.0.0/24
+R1(config)#ip prefix-list loop1 seq 10 permit 120.0.0.0/23
+R1(config)#ip prefix-list loop2 seq 5 permit 120.0.1.0/24
+R1(config)#ip prefix-list loop2 seq 10 permit 120.0.0.0/23
+R1(config)#router bgp 65000
+R1(config-router)#neighbor 50.0.0.2 prefix-list loop1 out
+R1(config-router)#neighbor 100.0.0.2 prefix-list loop2 out
+R1(config-router)#exit
+
+Inbound traffic manipulation with other routes adv
+
+R1(config)#ip prefix-list A seq 5 deny 120.0.0.0/24
+R1(config)#ip prefix-list A seq 10 permit 0.0.0.0/0 le 32
+R1(config)#ip prefix-list B seq 5 deny 120.0.1.0/24
+R1(config)#ip prefix-list B seq 10 permit 0.0.0.0/0 le 32
+
+R1(config)#route-map A permit 10
+R1(config-route-map)#match ip address prefix-list A
+R1(config-route-map)#exit
+R1(config)#route-map B permit 10
+R1(config-route-map)#match ip address prefix-list B
+R1(config-route-map)#exit
+R1(config)#router bgp 65000
+R1(config-router)#neighbor 50.0.0.2 route-map A out
+R1(config-router)#neighbor 100.0.0.2 route-map B out
