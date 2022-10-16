@@ -1,0 +1,6 @@
+ISP-3(config)#ip as-path access-list 10 permit ^3257$
+ISP-3(config)#route-map AS permit 10
+ISP-3(config-route-map)#match as-path 10
+ISP-3(config-route-map)#exit
+ISP-3(config)#router bgp 62000
+ISP-3(config-router)#nei 130.0.0.2 route-map 10 out
