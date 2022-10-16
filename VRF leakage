@@ -1,0 +1,7 @@
+R1(config)#ip vrf RED
+R1(config-vrf)#route-target both 65000:1
+R1(config-vrf)#route-target both 65000:2
+R1(config-vrf)#exit
+R1(config)#ip vrf BLUE
+R1(config-vrf)#route-target both 65000:1
+R1(config-vrf)#route-target both 65000:2
