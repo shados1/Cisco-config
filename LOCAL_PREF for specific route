@@ -1,0 +1,7 @@
+R4(config)#ip prefix-list local permit 160.0.0.0/23 ge 24
+R4(config)#route-map LOCAP permit 10
+R4(config-route-map)#match ip address prefix-list local
+R4(config-route-map)#set local-preference 200
+R4(config-route-map)#exit
+R4(config)#route-map LOCAP permit 20
+R4(config-route-map)#exit
