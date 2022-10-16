@@ -1,0 +1,2 @@
+R1(config-router)#neighbor 192.168.1.1 route-reflector-client
+R1(config-router)#neighbor 192.168.1.1 next-hop-self all
