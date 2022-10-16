@@ -1,0 +1,15 @@
+RP/0/RP0/CPU0:P(config)#prefix-set LOCAL
+RP/0/RP0/CPU0:P(config-pfx)#199.0.0.1/32
+RP/0/RP0/CPU0:P(config-pfx)#exit
+RP/0/RP0/CPU0:P(config)#route-policy ALL
+RP/0/RP0/CPU0:P(config-rpl)#if destination in LOCAL then
+RP/0/RP0/CPU0:P(config-rpl-if)#set weight 200          
+RP/0/RP0/CPU0:P(config-rpl-if)#else
+RP/0/RP0/CPU0:P(config-rpl-else)#pass
+RP/0/RP0/CPU0:P(config-rpl-else)#endif 
+RP/0/RP0/CPU0:P(config-rpl)#exit
+RP/0/RP0/CPU0:P(config)#router bgp 65000
+RP/0/RP0/CPU0:P(config-bgp)#nei 50.0.0.2
+RP/0/RP0/CPU0:P(config-bgp-nbr)#address-family ipv4 unicast 
+RP/0/RP0/CPU0:P(config-bgp-nbr-af)#route-policy ALL in    
+RP/0/RP0/CPU0:P(config-bgp-nbr-af)#commit
