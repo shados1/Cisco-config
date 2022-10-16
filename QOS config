@@ -1,0 +1,12 @@
+R6(config)#ip access-list extended 100
+R6(config-ext-nacl)#permit ip 192.168.0.0 0.0.0.255 72.53.160.0 0.0.15.255
+R6(config-ext-nacl)#permit ip 72.53.160.0 0.0.15.255 192.168.0.0 0.0.0.255
+R6(config)#class-map VOICE
+R6(config-cmap)#match access-group 100
+R6(config-cmap)#exit
+R6(config)#policy-map QOS
+R6(config-pmap)#class VOICE
+R6(config-pmap-c)#set ip dscp EF
+R6(config-pmap-c)#priority percent 30
+R6(config-pmap-c)#exit
+R6(config-if)#service-policy out QOS
