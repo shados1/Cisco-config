@@ -1,0 +1,165 @@
+PE (CE facing) ASR9K MPLS L3 VPN config
+
+vrf A
+ rd 65000:1
+ address-family ipv4 unicast
+  import route-target
+   65000:1
+  !       
+  export route-target
+   65000:1
+  !       
+ !        
+!         
+vrf B     
+ rd 65000:2
+ address-family ipv4 unicast
+  import route-target
+   65000:2
+  !       
+  export route-target
+   65000:2
+  !       
+    
+interface GigabitEthernet0/0/0/3
+ vrf A    
+ ipv4 address 50.0.0.1 255.255.255.252
+!         
+interface GigabitEthernet0/0/0/4
+ vrf B    
+ ipv4 address 100.0.0.1 255.255.255.0
+!         
+route-policy PASS
+  pass    
+end-policy
+!         
+router ospf 1
+ address-family ipv4 unicast
+ area 0   
+  interface Loopback1
+  !       
+  interface GigabitEthernet0/0/0/1
+  !       
+  interface GigabitEthernet0/0/0/2
+  !       
+ !        
+!         
+router bgp 65000
+ bgp router-id 10.10.10.1
+ address-family ipv4 unicast
+ !        
+ address-family vpnv4 unicast
+ !        
+ neighbor 160.0.0.1
+  remote-as 65000
+  update-source Loopback1
+  address-family ipv4 unicast
+   route-policy PASS in
+   route-policy PASS out
+  !       
+  address-family vpnv4 unicast
+   route-policy PASS in
+   route-policy PASS out
+  !       
+ !        
+ vrf A    
+  bgp router-id 50.0.0.1
+  label-allocation-mode per-ce
+  address-family ipv4 unicast
+   network 50.0.0.0/24
+  !       
+  neighbor 50.0.0.2
+   remote-as 61000
+   address-family ipv4 unicast
+    route-policy PASS in
+    route-policy PASS out
+   !      
+  !       
+ !        
+ vrf B    
+  bgp router-id 100.0.0.1
+  label-allocation-mode per-ce
+  address-family ipv4 unicast
+   network 100.0.0.0/24
+  !       
+  neighbor 100.0.0.2
+   remote-as 60000
+   address-family ipv4 unicast
+    route-policy PASS in
+    route-policy PASS out
+   !      
+  !       
+ !        
+!         
+mpls ldp  
+ interface GigabitEthernet0/0/0/1
+ !        
+ interface GigabitEthernet0/0/0/2
+ !        
+
+PE (ISP facing) ASR9K MPLS L3 VPN
+
+interface GigabitEthernet0/0/0/4
+ ipv4 address 120.0.0.1 255.255.255.0
+!         
+route-policy PASS
+  pass    
+end-policy
+!         
+router static
+ address-family ipv4 unicast
+  120.0.0.2/32 GigabitEthernet0/0/0/4
+ !        
+!         
+router ospf 1
+ area 0   
+  interface Loopback1
+  !       
+  interface GigabitEthernet0/0/0/0
+  !       
+  interface GigabitEthernet0/0/0/1
+  !       
+ !        
+!         
+router bgp 65000
+ bgp router-id 160.0.0.1
+ address-family ipv4 unicast
+  network 120.0.0.0/24
+  network 160.0.0.1/32
+ !        
+ address-family vpnv4 unicast
+  retain route-target all
+ !        
+ neighbor 120.0.0.2
+  remote-as 64000
+  address-family ipv4 unicast
+   route-policy PASS in
+   route-policy PASS out
+  !       
+  address-family vpnv4 unicast
+   route-policy PASS in
+   route-policy PASS out
+  !       
+ !        
+ neighbor 10.10.10.1
+  remote-as 65000
+  update-source Loopback1
+  address-family ipv4 unicast
+   route-policy PASS in
+   route-policy PASS out
+   next-hop-self
+  !       
+  address-family vpnv4 unicast
+   route-policy PASS in
+   route-policy PASS out
+   next-hop-self
+  !       
+ !        
+!         
+mpls ldp  
+ interface GigabitEthernet0/0/0/0
+ !        
+ interface GigabitEthernet0/0/0/1
+ !        
+!         
+end  
