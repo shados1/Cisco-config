@@ -1,0 +1,6 @@
+Configure VL between two ABRS in the same area 
+
+R1 - R2(VL) - R3 - R4(VL) - R5
+
+R2(config-router)#area 1 virtual-link 44.0.0.1
+R4(config-router)#area 1 virtual-link 22.0.0.1
