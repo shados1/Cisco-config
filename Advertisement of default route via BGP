@@ -1,0 +1,4 @@
+PE-2(config)#ip route 0.0.0.0 0.0.0.0 110.0.0.2
+PE-2(config)#router bgp 63000
+PE-2(config-router)#redistribute static 
+PE-2(config-router)#default-information originate 
