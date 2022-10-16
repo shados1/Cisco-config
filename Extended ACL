@@ -1,0 +1,6 @@
+Extended IP access list 180
+    10 deny udp 172.16.1.0 0.0.0.255 host 192.168.1.100 eq domain 
+    20 deny tcp 172.16.1.0 0.0.0.255 host 192.168.1.100 eq domain
+    30 deny tcp 172.16.2.0 0.0.0.255 host 192.168.2.100 eq 443
+    40 deny tcp 172.16.2.0 0.0.0.255 host 192.168.2.100 eq www 
+    50 permit ip any any 
