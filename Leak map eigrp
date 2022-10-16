@@ -1,0 +1,8 @@
+R1(config)#router eigrp 1
+R1(config-router)#network 192.168.1.0
+R1(config)#ip prefix-list LEAK permit 192.168.100.0/23 ge 24
+R1(config)#route-map LEAK permit 10
+R1(config-route-map)#match ip address prefix-list LEAK
+R1(config-route-map)#exit
+R1(config)#int tunnel 0
+R1(config-if)#ip summary-address eigrp 1 0.0.0.0 0.0.0.0 leak-map LEAK
