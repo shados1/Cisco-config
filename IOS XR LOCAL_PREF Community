@@ -1,0 +1,18 @@
+RP/0/RP0/CPU0:P(config)#community-set LOCAL 
+RP/0/RP0/CPU0:P(config-comm)#64000:150
+RP/0/RP0/CPU0:P(config-comm)#exit
+RP/0/RP0/CPU0:P(config)#route-policy LOCAL
+RP/0/RP0/CPU0:P(config-rpl)#if community matches-any LOCAL then
+RP/0/RP0/CPU0:P(config-rpl-if)#set local-preference 150 
+RP/0/RP0/CPU0:P(config-rpl-if)#else
+RP/0/RP0/CPU0:P(config-rpl-else)#pass 
+RP/0/RP0/CPU0:P(config-rpl-else)#endif 
+RP/0/RP0/CPU0:P(config)#commit
+RP/0/RP0/CPU0:P(config-bgp)#nei 100.0.0.2
+RP/0/RP0/CPU0:P(config)#router bgp 65000
+RP/0/RP0/CPU0:P(config-bgp-nbr)#address-family ipv4 unicast 
+RP/0/RP0/CPU0:P(config-bgp-nbr-af)#route-policy LOCAL in
+RP/0/RP0/CPU0:P(config-bgp-nbr-af)#exit
+RP/0/RP0/CPU0:P(config-bgp-nbr)#address-family vpnv4 unicast 
+RP/0/RP0/CPU0:P(config-bgp-nbr-af)#route-policy LOCAL in
+RP/0/RP0/CPU0:P(config-bgp-nbr-af)#commit
