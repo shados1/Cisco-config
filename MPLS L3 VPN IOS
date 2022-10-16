@@ -1,0 +1,106 @@
+PE-1
+
+
+ip vrf customerA
+ rd 65000:1
+ route-target export 65000:1
+ route-target import 65000:1
+
+ip vrf customerB
+ rd 65000:2
+ route-target export 65000:2
+ route-target import 65000:2
+
+interface Loopback1
+ ip address 160.0.0.1 255.255.255.255
+
+interface FastEthernet0/0
+ ip vrf forwarding customerA
+ ip address 50.0.0.1 255.255.255.0
+
+interface FastEthernet0/1
+ ip vrf forwarding customerB
+ ip address 100.0.0.1 255.255.255.0
+
+interface FastEthernet1/0
+ ip address 180.0.0.1 255.255.255.0
+  mpls ip
+
+router ospf 2 vrf customerA
+ redistribute bgp 65000 subnets
+ network 50.0.0.0 0.0.0.255 area 0
+
+router ospf 3 vrf customerB
+  redistribute bgp 65000 subnets
+ network 100.0.0.0 0.0.0.255 area 0
+
+router ospf 1
+ network 160.0.0.0 0.0.0.255 area 0
+ network 180.0.0.0 0.0.0.255 area 0
+
+router bgp 65000
+  neighbor 170.0.0.1 remote-as 65000
+ neighbor 170.0.0.1 update-source Loopback1
+ address-family vpnv4
+  neighbor 170.0.0.1 activate
+  neighbor 170.0.0.1 send-community extended
+ address-family ipv4 vrf customerB
+  redistribute ospf 3 vrf customerB
+  exit-address-family
+ 
+ address-family ipv4 vrf customerA
+  redistribute ospf 2 vrf customerA
+  exit-address-family
+
+PE-2
+
+ip vrf customerA
+ rd 65000:1
+ route-target export 65000:1
+ route-target import 65000:1
+
+ip vrf customerB
+ rd 65000:2
+ route-target export 65000:2
+ route-target import 65000:2
+
+interface Loopback1
+ ip address 170.0.0.1 255.255.255.255
+
+interface FastEthernet0/0
+ ip vrf forwarding customerA
+ ip address 150.0.0.1 255.255.255.0
+
+interface FastEthernet0/1
+ ip vrf forwarding customerB
+ ip address 200.0.0.1 255.255.255.0
+
+interface FastEthernet2/0
+ ip address 190.0.0.2 255.255.255.0
+ mpls ip
+
+router ospf 2 vrf customerA
+ redistribute bgp 65000 subnets
+ network 150.0.0.0 0.0.0.255 area 0
+
+router ospf 3 vrf customerB
+  redistribute bgp 65000 subnets
+ network 200.0.0.0 0.0.0.255 area 0
+
+router ospf 1
+ network 170.0.0.0 0.0.0.255 area 0
+ network 190.0.0.0 0.0.0.255 area 0
+
+router bgp 65000
+  bgp log-neighbor-changes
+ neighbor 160.0.0.1 remote-as 65000
+ neighbor 160.0.0.1 update-source Loopback1
+ address-family vpnv4
+  neighbor 160.0.0.1 activate
+  neighbor 160.0.0.1 send-community extended
+
+  address-family ipv4 vrf customerB
+  redistribute ospf 3 vrf customerB
+ 
+ address-family ipv4 vrf customerA
+  redistribute ospf 2 vrf customerA
