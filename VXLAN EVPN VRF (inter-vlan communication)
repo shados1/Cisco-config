@@ -1,0 +1,49 @@
+LEAF-3(config)# fabric forwarding anycast-gateway-mac 0000.0000.0001
+LEAF-3(config)# vlan 100
+LEAF-3(config-vlan)# vn-segment 10000
+LEAF-3(config-vlan)# exit
+LEAF-3(config)# route-map EVPN permit 10
+LEAF-3(config-route-map)# exit
+LEAF-3(config)# vrf context Tenant
+LEAF-3(config-vrf)# vni 10000
+LEAF-3(config-vrf)# rd auto 
+LEAF-3(config-vrf)# address-family ipv4 unicast 
+LEAF-3(config-vrf-af-ipv4)# route-target both auto 
+LEAF-3(config-vrf-af-ipv4)# route-target both auto evpn 
+LEAF-3(config-vrf-af-ipv4)# exit
+LEAF-3(config)# feature interface-vlan 
+LEAF-3(config)# int vlan 10
+LEAF-3(config-if)# no sh
+LEAF-3(config-if)# vrf member Tenant
+LEAF-3(config-if)# ip add 192.168.10.1/24
+LEAF-3(config-if)# fabric forwarding mode anycast-gateway 
+LEAF-3(config-if)# exit
+LEAF-3(config)# int vlan 20
+LEAF-3(config-if)# no sh
+LEAF-3(config-if)# vrf member Tenant
+LEAF-3(config-if)# ip add 192.168.20.1/24
+LEAF-3(config-if)# fabric forwarding mode anycast-gateway 
+LEAF-3(config-if)# exit
+LEAF-3(config)# int vlan 100
+LEAF-3(config-if)# no sh
+LEAF-3(config-if)# vrf member Tenant
+LEAF-3(config-if)# ip forward 
+LEAF-3(config-if)# exit
+LEAF-3(config)# int nve 1
+LEAF-3(config-if-nve)# member vni 100000 associate-vrf 
+LEAF-3(config-if-nve-vni)# exit
+LEAF-3(config-if-nve)# exit
+LEAF-3(config)# evpn 
+LEAF-3(config-evpn)# vni 10010 l2 
+LEAF-3(config-evpn-evi)# rd auto 
+LEAF-3(config-evpn-evi)# route-target both auto 
+LEAF-3(config-evpn-evi)# exit
+LEAF-3(config-evpn)# vni 10020 l2
+LEAF-3(config-evpn-evi)# rd auto 
+LEAF-3(config-evpn-evi)# route-target both auto 
+LEAF-3(config-evpn-evi)# end
+LEAF-3(config)# router bgp 65000
+LEAF-3(config-router)# vrf Tenant
+LEAF-3(config-router-vrf)# address-family ipv4 unicast 
+LEAF-3(config-router-vrf-af)# redistribute direct route-map EVPN
+LEAF-3(config-router-vrf-af)# end
