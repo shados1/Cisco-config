@@ -1,0 +1,9 @@
+PE-2(config)#ip prefix-list RT seq 5 deny 33.0.0.0/23 ge 24
+PE-2(config)#ip prefix-list RT seq 10 permit 0.0.0.0/0 le 32
+PE-2(config)#route-map RT permit 10
+PE-2(config-route-map)#match ip address prefix-list RT
+PE-2(config-route-map)#exit
+PE-2(config)#router bgp 64000
+PPE-2(config-router)#address-family vpnv4 
+PE-2(config-router-af)#neighbor 160.0.0.1 route-map RT in
+PE-2(config-router-af)#end
