@@ -1,0 +1,15 @@
+RP/0/RP0/CPU0:P(config)#prefix-set RFC
+RP/0/RP0/CPU0:P(config-pfx)#10.0.0.0/8 ge 23
+RP/0/RP0/CPU0:P(config-pfx)#exit
+RP/0/RP0/CPU0:P(config)#prefix-set LOCAL
+RP/0/RP0/CPU0:P(config-pfx)#160.0.0.1/32
+RP/0/RP0/CPU0:P(config-pfx)#exit
+RP/0/RP0/CPU0:P(config)#route-policy RFC
+RP/0/RP0/CPU0:P(config-rpl)#if destination in LOCAL then
+RP/0/RP0/CPU0:P(config-rpl-if)#set med 50 
+RP/0/RP0/CPU0:P(config-rpl-if)#else
+RP/0/RP0/CPU0:P(config-rpl-else)#if destination in RFC then
+RP/0/RP0/CPU0:P(config-rpl-if-2)#drop
+RP/0/RP0/CPU0:P(config-rpl-if-2)#else
+RP/0/RP0/CPU0:P(config-rpl-else-2)#pass
+RP/0/RP0/CPU0:P(config-rpl-else-2)#endif
