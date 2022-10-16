@@ -1,0 +1,26 @@
+R1(config)#ip vrf RED
+R1(config-vrf)#rd 65000:100
+R1(config-vrf)#exit
+R1(config)#ip vrf BLUE
+R1(config-vrf)#rd 65000:200
+R1(config-vrf)#exit
+
+R1(config)#int g0/0
+R1(config-if)#ip vrf forwarding RED
+R1(config-if)#ip add 50.0.0.1 255.255.255.0
+R1(config-if)#exit
+R1(config)#int g1/0
+R1(config-if)#ip vrf forwarding BLUE
+R1(config-if)#ip add 200.0.0.1 255.255.255.0
+
+R1(config)#router bgp 65000
+R1(config-router)#bg
+R1(config-router)#bgp ro
+R1(config-router)#bgp router-id 1.1.1.1
+R1(config-router)#address-family ipv4 vrf RED
+R1(config-router-af)#neighbor 50.0.0.2 remote-as 64000
+R1(config-router-af)#neighbor 50.0.0.2 activate
+R1(config-router-af)#exit
+R1(config-router)#address-family ipv4 VRF BLUE
+R1(config-router-af)#neighbor 200.0.0.2 remote-as 62000
+R1(config-router-af)#neighbor 200.0.0.2 activate
