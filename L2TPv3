@@ -1,0 +1,43 @@
+
+R2(config)#int f0/0
+R2(config-if)#no sh
+R2(config-if)#ip add 50.0.0.2 255.255.255.0
+R2(config-if)#exit
+R2(config)#int f0/1
+R2(config-if)#no sh
+R2(config-if)#exit
+R2(config)#pseudowire-class default
+R2(config-pw-class)#encapsulation l2tpv3
+R2(config-pw-class)#protocol l2tpv3
+R2(config-pw-class)#ip local interface fastEthernet 0/0
+R2(config-pw-class)#exit
+R2(config)#int f0/1
+R2(config-if)#xconnect 50.0.0.1 1 encapsulation l2tpv3 pw-class default
+R2(config-if)#exit
+
+R1(config)#crypto isakmp policy 10
+R1(config-isakmp)#hash sha
+R1(config-isakmp)#authentication pre-share
+R1(config-isakmp)#group 5
+R1(config-isakmp)#lifetime 3600
+R1(config-isakmp)#encryption aes 256
+R1(config-isakmp)#exit
+R1(config)#crypto isakmp key 0 password address 50.0.0.2
+R1(config)#crypto ipsec transform-set T esp-aes 256 esp-sha-hmac
+R1(cfg-crypto-trans)#mode tunnel
+R1(cfg-crypto-trans)#exit
+R1(config)#crypto ipsec profile PROTECT
+R1(ipsec-profile)#set transform-set T
+R1(ipsec-profile)#exit
+R1(config)#int tunnel 0
+R1(config-if)#tunnel mode ipsec ipv4
+R1(config-if)#tunnel protection ipsec profile PROTECT
+
+R2(config)#no pseudowire-class default
+R2(config)#pseudowire-class default
+R2(config-pw-class)#encapsulation l2tpv3
+R2(config-pw-class)#protocol l2tpv3
+R2(config-pw-class)#ip local interface tunnel 0
+R2(config)#int f0/1
+R2(config-if)#no xconnect 50.0.0.1 1 encapsulation l2tpv3 pw-class default
+R2(config-if)#xconnect 172.16.0.1 1 encapsulation l2tpv3 pw-class default
