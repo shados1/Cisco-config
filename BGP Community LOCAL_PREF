@@ -1,0 +1,21 @@
+ISP1(config)#ip community-list 10 permit 100:150
+ISP1(config)#ip bgp-community new-format
+ISP1(config)#route-map LOCAL permit 10
+ISP1(config-route-map)#match community 10
+ISP1(config-route-map)#set local-preference 150
+ISP1(config-route-map)#exit
+ISP1(config)#router-bgp 100
+CE-2(config-router)#neighbor 192.168.0.2 route-map LOCAL in
+CE-2(config-router)#exit
+
+CE-2(config)#ip prefix-list LOCAL seq 5 permit 199.0.0.0/24
+CE-2(config)#route-map LOCAL permit 10
+CE-2(config-route-map)#set community 100:150
+CE-2(config-route-map)#match ip address prefix-list LOCAL
+CE-2(config-route-map)#exit
+CE-2(config)#route-map LOCAL permit 20
+CE-2(config)#ip bgp-community new-format
+CE-2(config)#router bgp 200
+CE-2(config-router)#neighbor 192.168.0.1 route-map LOCAL out
+CE-2(config-router)#neighbor 192.168.0.1 send-community
+CE-2(config-router)#exit
