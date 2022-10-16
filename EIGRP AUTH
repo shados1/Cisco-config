@@ -1,0 +1,8 @@
+R3232(config)#key chain 1
+R3232(config-keychain)#key 1
+R3232(config-keychain-key)#key-string password
+R3232(config-keychain-key)#exit
+
+R3232(config)#int tunnel0
+R3232(config-if)#ip authentication mode eigrp 2 md5 
+R3232(config-if)#ip authentication key-chain eigrp 2 1
