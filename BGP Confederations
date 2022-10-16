@@ -1,0 +1,14 @@
+R1(config)#router bgp 10
+R1(config)#bgp confederation identifier 100
+R1(config)#bgp confederation peers 20
+R1(config)#neighbor 50.0.0.2 remote-as 20
+R1(config)#neighbor 50.0.0.2 ebgp-multihop 2
+R1(config)#neighbor 100.0.0.2 remote-as 10
+
+
+R4(config)#router bgp 20
+R4(config)#bgp confederation identifier 100
+R4(config)#bgp confederation peers 10
+R4(config)#neighbor 50.0.0.1 remote-as 10
+R4(config)#neighbor 50.0.0.1 ebgp-multihop 2
+R4(config)#neighbor 150.0.0.2 remote-as 20
