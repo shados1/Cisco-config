@@ -1,0 +1,22 @@
+LEAF-1(config)# feature vn-segment-vlan-based 
+LEAF-1(config)# feature nv overlay 
+LEAF-1(config)# vlan 10
+LEAF-1(config-vlan)# vn-segment 10010
+LEAF-1(config-vlan)# int nve 1
+LEAF-1(config-if-nve)# no sh
+LEAF-1(config-if-nve)# source-interface loo 1
+LEAF-1(config-if-nve)# member vni 10010
+LEAF-1(config-if-nve-vni)# ingress-replication protocol static 
+LEAF-1(config-if-nve-vni-ingr-rep)# peer-ip 2.2.2.2
+
+         
+LEAF-2(config)# feature vn-segment-vlan-based 
+LEAF-2(config)# feature nv overlay 
+LEAF-2(config)# vlan 10
+LEAF-2(config-vlan)# vn-segment 10010
+LEAF-2(config-vlan)# int nve 1
+LEAF-2(config-if-nve)# no sh
+LEAF-2(config-if-nve)# source-interface loo 1
+LEAF-2(config-if-nve)# member vni 10010
+LEAF-2(config-if-nve-vni)# ingress-replication protocol static 
+LEAF-2(config-if-nve-vni-ingr-rep)# peer-ip 1.1.1.1
