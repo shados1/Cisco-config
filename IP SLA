@@ -1,0 +1,10 @@
+R2(config)#ip route 0.0.0.0 0.0.0.0 100.0.0.2 10
+R2(config)#ip sla 1
+R2(config-ip-sla)#icmp-echo 1.1.1.1 source-interface gigabitEthernet 3
+R2(config-ip-sla-echo)#timeout 1000
+R2(config-ip-sla-echo)#threshold 2
+R2(config-ip-sla-echo)#frequency 3
+R2(config-ip-sla-echo)#exit
+R2(config)#ip sla schedule 1 life forever start-time now
+R2(config)#track 1 ip sla 1 reachability 
+R2(config)#ip route 0.0.0.0 0.0.0.0 120.0.0.2 track 1 
