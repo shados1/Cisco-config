@@ -1,0 +1,9 @@
+LSA 3 summarization
+R2(config)#router ospf 1
+R2(config-router)#area 0 range 192.168.0.0 255.255.0.0
+
+LSA 5 & 7 summarization
+
+R5(config)#router ospf 1
+R5(config-router)#redistribute eigrp 1 subnets
+R5(config-router)#summary-address 172.16.0.0 255.255.0.0
