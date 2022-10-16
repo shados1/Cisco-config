@@ -1,0 +1,8 @@
+R4(config)#ip prefix-list LOCAL seq 5 permit 0.0.0.0/0 le 32
+R4(config)#route-map LOCAL permit 10
+R4(config-route-map)#match ip address prefix-list LOCAL
+R4(config-route-map)#set local-preference 800
+R4(config-route-map)#exit
+R4(config)#router bgp 63000
+R4(config-router)#neighbor 150.0.0.2 route-map LOCAL in
+R4(config-router)#exit
