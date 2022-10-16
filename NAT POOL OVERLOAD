@@ -1,0 +1,11 @@
+R1(config)#int g1/0
+R1(config-if)#ip nat out
+R1(config-if)#exit
+R1(config)#int g0/0
+R1(config-if)#ip nat in
+R1(config-if)#exit
+R1(config)#ip nat pool POOL 100.0.0.1 100.0.0.3 netmask 255.255.255.0
+R1(config)#ip access-list standard NAT
+R1(config-std-nacl)#permit 10.0.0.0 0.0.0.255
+R1(config-std-nacl)#exit
+R1(config)#ip nat inside source list NAT pool POOL overload
