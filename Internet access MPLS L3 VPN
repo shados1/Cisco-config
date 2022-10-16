@@ -1,0 +1,33 @@
+R4(config)#ip route vrf B 0.0.0.0 0.0.0.0 150.0.0.2 global 
+R4(config)#ip route 101.0.0.0 255.255.255.0 gigabitEthernet 4 101.0.0.2
+R4(config)#ip route vrf B 101.0.0.0 255.255.255.0 101.0.0.2
+R4(config)#router bgp 65000
+R4(config-router)#redistribute static 
+R4(config-router)#neighbor 170.0.0.1 next-hop-self all
+
+OR (dot1q subinterfaces)
+
+CE
+R7(config)#int g4.10
+R7(config-subif)#encapsulation dot1Q 1
+R7(config-subif)#ip add 201.0.0.2 255.255.255.0
+R7(config-subif)#ip ospf 1 area 0
+R7(config-subif)#exit
+R7(config)#int g4.20
+R7(config-subif)#encapsulation dot1Q 10
+R7(config-subif)#ip add 202.0.0.2 255.255.255.0
+R7(config-subif)#ip ospf 2 area 0
+
+PE
+
+R2(config)#int g4.10
+R2(config-subif)#encapsulation dot1Q 1
+R2(config-subif)#ip vrf forwarding B
+R2(config-subif)#ip add 201.0.0.1 255.255.255.0
+R2(config-subif)#ip ospf 3 area 0
+R2(config-subif)#exit
+R2(config)#int g4.20
+R2(config-subif)#encapsulation dot1Q 10
+R2(config-subif)#ip add 202.0.0.1 255.255.255.0
+R2(config-subif)#ip ospf 1 area 0
+R2(config-subif)#exit
