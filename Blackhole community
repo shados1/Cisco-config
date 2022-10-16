@@ -1,0 +1,26 @@
+CE:
+
+R2(config)#ip route 172.16.0.2 255.255.255.255 null 0
+R2(config)#route-map blackhole permit 10
+R2(config-route-map)#set community 100:666
+R2(config-route-map)#exit
+R2(config)#router bgp 200
+R2(config-router)#neighbor 192.168.1.1 send-community
+R2(config-router)#network 172.16.0.2 mask 255.255.255.255 route-map blackhole
+
+PE:
+
+R1(config)#ip bgp-community new-format
+R1(config)#ip route 10.10.10.10 255.255.255.255 null 0
+R1(config)#ip community-list 10 permit 100:666
+R1(config)#route-map blackhole permit 10
+R1(config-route-map)#match community 10
+R1(config-route-map)#set ip next-hop 10.10.10.10
+R1(config-route-map)#set community no-export
+R1(config-route-map)#exit
+R1(config)#route-map blackhole permit 20
+R1(config-route-map)#exit
+R1(config)#router bgp 100
+R1(config-router)#neighbor 192.168.1.2 ebgp-multihop 255
+R1(config-router)#neighbor 192.168.1.2 route-map blackhole in
+R1(config-router)#end
