@@ -1,0 +1,30 @@
+SPINE(config)# int loo 10
+SPINE(config-if)# ip add 7.7.7.7/32
+SPINE(config-if)# ip router ospf  1 area 0
+SPINE(config-if)# exit
+SPINE(config)# feature pim
+SPINE(config)# int e1/3
+SPINE(config-if)# ip pim sparse-mode 
+SPINE(config-if)# int e1/1
+SPINE(config-if)# ip pim sparse-mode 
+SPINE(config-if)# int e1/2
+SPINE(config-if)# ip pim sparse-mode 
+SPINE(config-if)# int loo 1
+SPINE(config-if)# ip pim sparse-mode 
+SPINE(config-if)# int loo 10
+SPINE(config-if)# ip pim sparse-mode 
+SPINE(config-if)# exit
+SPINE(config)# ip pim rp-address 7.7.7.7 group-list 225.0.0.0/24 bidir 
+SPINE(config)# ip pim ssm range 232.0.0.0/8
+
+LEAF-2(config)# int e1/3
+LEAF-2(config-if)# ip pim sparse-mode 
+LEAF-2(config-if)# int loo 1
+LEAF-2(config-if)# ip pim sparse-mode 
+LEAF-2(config-if)# exit
+LEAF-2(config)# ip pim rp-address 7.7.7.7 group-list 225.0.0.0/24 bidir 
+LEAF-2(config)# ip pim ssm range 232.0.0.0/8
+LEAF-2(config)# int nve 1
+LEAF-2(config-if-nve)# member vni 10010
+LEAF-2(config-if-nve-vni)# no ingress-replication protocol static 
+LEAF-2(config-if-nve-vni)# mcast-group 225.0.0.2
