@@ -1,0 +1,11 @@
+
+P(config-router)#no bgp default route-target filter
+
+P(config-router)#neighbor 100.0.0.1 remote-as 1
+P(config-router)#address-family vpnv4
+P(config-router-af)#neighbor 100.0.0.1 activate 
+P(config-router-af)#neighbor 100.0.0.1 next-hop-self all
+
+OR
+
+CE-1(config)#ip route 100.0.0.2 255.255.255.255 50.0.0.2
