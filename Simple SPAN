@@ -1,0 +1,2 @@
+SW1(config)#monitor session 1 source interface fastethernet 0/1
+SW1(config)#monitor session 1 destination interface fastethernet 0/2
