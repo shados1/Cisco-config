@@ -1,0 +1,6 @@
+R1(config)#route-map AS permit 10
+R1(config-route-map)#set as-path prepend 65000 65000
+R1(config)#router bgp 65000
+R1(config-router)#neighbor 200.0.0.2 route-map AS out
+R1(config-router)#neighbor 50.0.0.2 route-map AS out
+R1(config-router)#exit
