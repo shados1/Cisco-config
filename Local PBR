@@ -1,0 +1,8 @@
+R2(config)#ip access-list extended PBR
+R2(config-ext-nacl)#permit ip any any
+R2(config-ext-nacl)#exit
+R2(config)#route-map PBR permit 20
+R2(config-route-map)#match ip address PBR
+R2(config-route-map)#set ip next-hop 100.0.0.2
+R2(config-route-map)#exit
+R2(config)#ip local policy route-map PBR
