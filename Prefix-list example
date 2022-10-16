@@ -1,0 +1,4 @@
+R3(config)#ip prefix-list BGP seq 5 deny 192.168.0.0/16 ge 17
+R3(config)#ip prefix-list BGP seq 10 permit 0.0.0.0/0 le 32
+R3(config)#router bgp 65000
+R3(config-router)#neighbor 30.0.0.2 prefix-list BGP out
