@@ -1,0 +1,82 @@
+HUB
+
+R1(config)#int tunnel 0
+R1(config-if)#ip add 10.0.0.1 255.255.255.0
+R1(config-if)#ip mtu 1400
+R1(config-if)#ip nhrp auth password
+R1(config-if)#ip nhrp map multicast dynamic
+R1(config-if)#ip nhrp network-id 1
+R1(config-if)#no ip split-horizon eigrp 1
+R1(config-if)#no ip next-hop-self eigrp 1
+R1(config-if)#ip tcp adjust-mss 1360
+R1(config-if)#delay 1000
+R1(config-if)#tunnel sou loo 1
+R1(config-if)#tunnel mode gre multipoint
+R1(config-if)#tunnel key 1000
+R1(config-if)#ip nhrp redirect
+
+SPOKE
+R2(config)#int tunnel 0
+R2(config-if)#ip add 10.0.0.2 255.255.255.0
+R2(config-if)#ip mtu 1400
+R2(config-if)#ip tcp adjust-mss 1360
+R2(config-if)#ip nhrp auth password
+R2(config-if)#ip nhrp map 10.0.0.1 160.0.0.1
+R2(config-if)#ip nhrp map multicast 160.0.0.1
+R2(config-if)#ip nhrp network-id 1
+R2(config-if)#ip nhrp nhs 10.0.0.1
+R2(config-if)#tunnel sou loo 1
+R2(config-if)#tunnel key 1000
+R2(config-if)#tunnel mode gre multipoint
+R2(config-if)#ip nhrp shortcut
+
+R1(config)#crypto isakmp policy 10
+R1(config-isakmp)#encryption aes 256
+R1(config-isakmp)#hash sha
+R1(config-isakmp)#authentication pre-share
+R1(config-isakmp)#group 5
+R1(config-isakmp)#lifetime 3600
+R1(config-isakmp)#exit
+R1(config)#crypto isakmp key 0 password address 0.0.0.0
+R1(config)#crypto ipsec transform-set T esp-aes 256 esp-sha-hmac
+R1(cfg-crypto-trans)#mode transport
+R1(cfg-crypto-trans)#exit
+R1(config)#crypto ipsec profile PROTECT
+R1(ipsec-profile)#set transform-set T
+R1(ipsec-profile)#exit
+R1(config)#int tunnel 0
+R1(config-if)#tunnel protection ipsec profile PROTECT
+
+**
+
+PHASE 3:
+enable split-horizon
+enable next-hop-self
+set the default route - default-information originate
+
+int tunnel 0
+ip add 172.16.0.1 255.255.255.0
+ip mtu 1400
+ip tcp adjust-mss 1360
+ip nhrp auth password
+ip nhrp map multicast dynamic
+ip nhrp network-id 1
+delay 1000
+tunnel sou loo 1
+tunnel mode gre multipoint
+tunnel key 1000
+ip nhrp redirect
+
+int tunnel 0
+ip add 172.16.0.3 255.255.255.0
+ip mtu 1400
+ip tcp adjust-mss 1360
+ip nhrp auth password
+ip nhrp map 172.16.0.1 11.0.0.1
+ip nhrp map multicast 11.0.0.1
+ip nhrp network-id 1
+ip nhrp nhs 172.16.0.1
+tunnel sou loo 1
+tunnel key 1000
+tunnel mode gre multipoint
+ip nhrp shortcut
