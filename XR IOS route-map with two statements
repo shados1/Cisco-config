@@ -1,0 +1,27 @@
+RP/0/RP0/CPU0:P(config)#prefix-set LOCAL
+RP/0/RP0/CPU0:P(config-pfx)#197.0.0.1/32
+RP/0/RP0/CPU0:P(config-pfx)#exit
+
+RP/0/RP0/CPU0:P(config)#community-set BLACKHOLE
+RP/0/RP0/CPU0:P(config-comm)#64000:666
+RP/0/RP0/CPU0:P(config-comm)#exit
+RP/0/RP0/CPU0:P(config)#commit
+RP/0/RP0/CPU0:P(config)#route-policy ALL
+RP/0/RP0/CPU0:P(config-rpl)#if community matches-any BLACKHOLE then 
+RP/0/RP0/CPU0:P(config-rpl-if)#set next-hop discard 
+RP/0/RP0/CPU0:P(config-rpl-if)#else
+RP/0/RP0/CPU0:P(config-rpl-else)#if destination in LOCAL then
+RP/0/RP0/CPU0:P(config-rpl-if-2)#set weight 200
+RP/0/RP0/CPU0:P(config-rpl-if-2)#else
+RP/0/RP0/CPU0:P(config-rpl-else-2)#pass 
+RP/0/RP0/CPU0:P(config-rpl-else-2)#endif 
+RP/0/RP0/CPU0:P(config-rpl-else)#exit
+RP/0/RP0/CPU0:P(config-rpl)#exit
+RP/0/RP0/CPU0:P(config)#commit
+RP/0/RP0/CPU0:P(config)#router bgp 65000
+RP/0/RP0/CPU0:P(config-bgp)#neighbor 50.0.0.2 
+RP/0/RP0/CPU0:P(config-bgp-nbr)#address-family ipv4 unicast 
+RP/0/RP0/CPU0:P(config-bgp-nbr-af)#route-policy ALL in
+RP/0/RP0/CPU0:P(config-bgp-nbr-af)#exit
+RP/0/RP0/CPU0:P(config-bgp-nbr)#exit
+RP/0/RP0/CPU0:P(config-bgp)#commit
