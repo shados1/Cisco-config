@@ -95,6 +95,7 @@ evpn
     route-target import auto
     route-target export auto
   vni 10020 l2
+    rd auto
     route-target import auto
     route-target export auto
 
