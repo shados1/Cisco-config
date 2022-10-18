@@ -1,3 +1,57 @@
+SPINE
+
+nv overlay evpn
+feature ospf
+feature bgp
+feature pim
+feature fabric forwarding
+feature interface-vlan
+feature vn-segment-vlan-based
+feature nv overlay
+
+ip pim rp-address 3.3.3.3 group-list 225.0.0.0/24 bidir
+ip pim ssm range 232.0.0.0/8
+
+interface Ethernet1/2
+  no switchport
+  ip address 10.0.0.1/30
+  ip router ospf 1 area 0.0.0.0
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/3
+  no switchport
+  ip address 10.1.1.1/30
+  ip router ospf 1 area 0.0.0.0
+  ip pim sparse-mode
+  no shutdown
+
+interface loopback1
+  ip address 3.3.3.3/32
+  ip router ospf 1 area 0.0.0.0
+  ip pim sparse-mode
+
+router ospf 1
+  router-id 3.3.3.3
+router bgp 65000
+  router-id 3.3.3.3
+  address-family l2vpn evpn
+    retain route-target all
+  neighbor 1.1.1.1
+    remote-as 65000
+    update-source loopback1
+    address-family l2vpn evpn
+      send-community
+      send-community extended
+      route-reflector-client
+  neighbor 2.2.2.2
+    remote-as 65000
+    update-source loopback1
+    address-family l2vpn evpn
+      send-community
+      send-community extended
+      route-reflector-client
+
 LEAF
 
 nv overlay evpn
@@ -101,57 +155,3 @@ evpn
     rd auto
     route-target import auto
     route-target export auto
-
-SPINE
-
-nv overlay evpn
-feature ospf
-feature bgp
-feature pim
-feature fabric forwarding
-feature interface-vlan
-feature vn-segment-vlan-based
-feature nv overlay
-
-ip pim rp-address 3.3.3.3 group-list 225.0.0.0/24 bidir
-ip pim ssm range 232.0.0.0/8
-
-interface Ethernet1/2
-  no switchport
-  ip address 10.0.0.1/30
-  ip router ospf 1 area 0.0.0.0
-  ip pim sparse-mode
-  no shutdown
-
-interface Ethernet1/3
-  no switchport
-  ip address 10.1.1.1/30
-  ip router ospf 1 area 0.0.0.0
-  ip pim sparse-mode
-  no shutdown
-
-interface loopback1
-  ip address 3.3.3.3/32
-  ip router ospf 1 area 0.0.0.0
-  ip pim sparse-mode
-
-router ospf 1
-  router-id 3.3.3.3
-router bgp 65000
-  router-id 3.3.3.3
-  address-family l2vpn evpn
-    retain route-target all
-  neighbor 1.1.1.1
-    remote-as 65000
-    update-source loopback1
-    address-family l2vpn evpn
-      send-community
-      send-community extended
-      route-reflector-client
-  neighbor 2.2.2.2
-    remote-as 65000
-    update-source loopback1
-    address-family l2vpn evpn
-      send-community
-      send-community extended
-      route-reflector-client
