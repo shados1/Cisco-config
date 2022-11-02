@@ -1,48 +1,79 @@
-PE-1
+CE-1
 
-R1(config)#l2vpn vfi context Blue
-R1(config-vfi)#vpn id 63
-R1(config-vfi)#autodiscovery bgp signaling bgp 
-R1(config-vfi-autodiscovery)#ve id  101
-R1(config-vfi-autodiscovery)#exit
-R1(config-vfi)#exit
-R1(config)#bridge-domain 255
-R1(config-bdomain)#member vfi Blue
-R1(config-bdomain)#member gigabitEthernet 3 service-instance 10
-R1(config-bdomain-efp)#exit
-R1(config-bdomain)#exit
-R1(config)#int g3
-R1(config-if)#service instance 10 ethernet 
-R1(config-if-srv)#encapsulation default 
+l2vpn vfi context Blue 
+ vpn id 63
+ autodiscovery bgp signaling bgp 
+  ve id 101
+      
+bridge-domain 255 
+ member GigabitEthernet2 service-instance 10
+ member vfi Blue
+       
+interface Loopback1
+ ip address 11.0.0.1 255.255.255.255
+!         
+interface GigabitEthernet1
+ ip address 50.0.0.2 255.255.255.0
+ negotiation auto
+ mpls ip  
+!         
+interface GigabitEthernet2
+ no ip address
+ negotiation auto
+ service instance 10 ethernet
+  encapsulation default
 
-R1(config)#router bgp 65000
-R1(config-router)#neighbor 190.0.0.1 remote-as 65000
-R1(config-router)#neighbor 190.0.0.1 update-source loo 1
-R1(config-router)#address-family l2vpn vpls 
-R1(config-router-af)#neighbor 190.0.0.1 activate 
-R1(config-router-af)#neighbor 190.0.0.1 send-community extended 
-R1(config-router-af)#neighbor 190.0.0.1 suppress-signaling-protocol ldp 
-
-PE-2
-
-R4(config)#l2vpn vfi Context Blue
-R4(config-vfi)#vpn id 63
-R4(config-vfi)#autodiscovery bgp signaling bgp 
-R4(config-vfi-autodiscovery)#ve id 104
-R4(config-vfi-autodiscovery)#exit
-R4(config-vfi)#exit
-R4(config)#bridge-domain 255
-R4(config-bdomain)#member vfi Blue
-R4(config-bdomain)#member gigabitEthernet 3 service-instance 13 
-R4(config-bdomain-efp)#exit
-R4(config)#int gig3
-R4(config-if)#service instance 13 ethernet 
-R4(config-if-srv)#encapsulation default 
-
-R4(config)#router bgp 65000
-R4(config-router)#neighbor 160.0.0.1 remote-as 65000
-R4(config-router)#neighbor 160.0.0.1 update-source loo 1
-R4(config-router)#address-family l2vpn vpls 
-R4(config-router-af)#neighbor 160.0.0.1 activate 
-R4(config-router-af)#neighbor 160.0.0.1 send-community extended 
-R4(config-router-af)#neighbor 160.0.0.1 suppress-signaling-protocol ldp
+router ospf 1
+ network 0.0.0.0 255.255.255.255 area 0
+!         
+router bgp 65000
+ bgp log-neighbor-changes
+ neighbor 22.0.0.1 remote-as 65000
+ neighbor 22.0.0.1 update-source Loopback1
+ !        
+ address-family l2vpn vpls
+  neighbor 22.0.0.1 activate
+  neighbor 22.0.0.1 send-community extended
+  neighbor 22.0.0.1 suppress-signaling-protocol ldp
+ exit-address-family
+ 
+ 
+ 
+CE-2
+ 
+ l2vpn vfi context Blue 
+ vpn id 63
+ autodiscovery bgp signaling bgp 
+  ve id 104
+      
+bridge-domain 255 
+ member GigabitEthernet2 service-instance 13
+ member vfi Blue
+     
+interface Loopback1
+ ip address 22.0.0.1 255.255.255.255
+!         
+interface GigabitEthernet1
+ ip address 150.0.0.2 255.255.255.0
+ negotiation auto
+ mpls ip  
+!         
+interface GigabitEthernet2
+ no ip address
+ service instance 13 ethernet
+  encapsulation default
+ !        
+!         
+router ospf 1
+ network 0.0.0.0 255.255.255.255 area 0
+!         
+router bgp 65000
+ bgp log-neighbor-changes
+ neighbor 11.0.0.1 remote-as 65000
+ neighbor 11.0.0.1 update-source Loopback1
+ !        
+ address-family l2vpn vpls
+  neighbor 11.0.0.1 activate
+  neighbor 11.0.0.1 send-community extended
+  neighbor 11.0.0.1 suppress-signaling-protocol ldp
+ exit-address-family
