@@ -1,0 +1,34 @@
+R1
+
+interface GigabitEthernet1
+ service instance 10 ethernet
+  encapsulation untagged
+  bridge-domain 10
+
+interface GigabitEthernet4
+ no ip address
+  service instance 10 ethernet
+  encapsulation dot1q 10
+  rewrite ingress tag pop 1 symmetric
+  bridge-domain 10
+
+interface BDI10
+ ip address 100.0.0.1 255.255.255.248
+
+R2
+
+interface GigabitEthernet1
+ no ip address
+ service instance 10 ethernet
+  encapsulation untagged
+  bridge-domain 10
+
+interface GigabitEthernet4
+ no ip address
+ service instance 10 ethernet
+  encapsulation dot1q 10
+  rewrite ingress tag pop 1 symmetric
+  bridge-domain 10
+
+interface BDI10
+ ip address 100.0.0.2 255.255.255.248
