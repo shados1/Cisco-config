@@ -1,0 +1,36 @@
+
+Active
+
+failover
+failover lan unit primary
+failover lan interface FAILOVER GigabitEthernet0/0.1
+failover link STATEFUL GigabitEthernet0/0.2
+failover interface ip FAILOVER 10.0.0.1 255.255.255.0 standby 10.0.0.2
+failover interface ip STATEFUL 10.1.1.1 255.255.255.0 standby 10.1.1.2
+
+interface GigabitEthernet0/0.1
+ description LAN Failover Interface
+ vlan 10
+!
+interface GigabitEthernet0/0.2
+ description STATE Failover Interface
+ vlan 20  
+
+Standby
+
+failover
+failover lan unit secondary
+failover lan interface FAILOVER GigabitEthernet0/0.1
+failover link STATEFUL GigabitEthernet0/0.2
+failover interface ip FAILOVER 10.0.0.1 255.255.255.0 standby 10.0.0.2
+failover interface ip STATEFUL 10.1.1.1 255.255.255.0 standby 10.1.1.2
+
+interface GigabitEthernet0/0
+!
+interface GigabitEthernet0/0.1
+ description LAN Failover Interface
+ vlan 10
+!
+interface GigabitEthernet0/0.2
+ description STATE Failover Interface
+ vlan 20      
