@@ -1,0 +1,287 @@
+
+LEAF - 1 
+
+nv overlay evpn
+feature ospf
+feature bgp
+feature pim
+feature fabric forwarding
+feature interface-vlan
+feature vn-segment-vlan-based
+feature lacp
+feature vpc
+feature nv overlay
+
+fabric forwarding anycast-gateway-mac 0000.0000.0001
+ip pim rp-address 1.1.1.1 group-list 225.0.0.0/24 bidir
+ip pim ssm range 232.0.0.0/8
+vlan 1,10,20,100,777
+vlan 10
+  vn-segment 10
+vlan 20
+  vn-segment 20
+vlan 100
+  vn-segment 100
+
+route-map EVPN permit 10
+vrf context KDV
+  vni 100
+  rd auto
+  address-family ipv4 unicast
+    route-target both auto
+    route-target both auto evpn
+vrf context management
+hardware access-list tcam region racl 512
+hardware access-list tcam region arp-ether 256 double-wide
+vpc domain 1
+  peer-keepalive destination 10.0.0.2 source 10.0.0.1
+
+interface Vlan10
+  no shutdown
+  vrf member KDV
+  ip address 192.168.10.1/24
+  fabric forwarding mode anycast-gateway
+
+interface Vlan20
+  no shutdown
+  vrf member KDV
+  ip address 192.168.20.1/24
+  fabric forwarding mode anycast-gateway
+
+interface Vlan100
+  no shutdown
+  vrf member KDV
+  ip forward
+
+interface Vlan777
+  no shutdown
+  ip address 10.10.10.1/30
+  ip router ospf 1 area 0.0.0.0
+  ip pim sparse-mode
+
+interface port-channel1
+  switchport mode trunk
+  spanning-tree port type network
+  vpc peer-link
+
+interface port-channel10
+  switchport mode trunk
+  switchport trunk allowed vlan 1,10,20,100
+  vpc 10
+
+interface port-channel20
+  switchport mode trunk
+  switchport trunk allowed vlan 1,10,20,100
+  vpc 20
+
+interface nve1
+  no shutdown
+  host-reachability protocol bgp
+  source-interface loopback1
+  member vni 10
+    suppress-arp
+    mcast-group 225.0.0.2
+  member vni 20
+    suppress-arp
+    mcast-group 225.0.0.2
+  member vni 100 associate-vrf
+
+interface Ethernet1/1
+  switchport access vlan 10
+
+interface Ethernet1/2
+  switchport mode trunk
+  switchport trunk allowed vlan 1,10,20,100
+  channel-group 10 mode active
+
+interface Ethernet1/3
+  switchport mode trunk
+  switchport trunk allowed vlan 1,10,20,100
+  channel-group 20 mode active
+
+interface Ethernet1/4
+  description PEER LINKS
+  switchport mode trunk
+  channel-group 1 mode active
+
+interface Ethernet1/5
+  description PEER LINKS
+  switchport mode trunk
+  channel-group 1 mode active
+
+
+interface mgmt0
+  vrf member management
+  ip address 10.0.0.1/30
+
+interface loopback1
+  ip address 1.1.1.1/32
+  ip address 3.3.3.3/32 secondary
+  ip router ospf 1 area 0.0.0.0
+
+router ospf 1
+  router-id 1.1.1.1
+router bgp 65000
+  router-id 1.1.1.1
+  address-family l2vpn evpn
+  neighbor 2.2.2.2
+    remote-as 65000
+    update-source loopback1
+    address-family l2vpn evpn
+      send-community
+      send-community extended
+  vrf KDV
+    address-family ipv4 unicast
+      redistribute direct route-map EVPN
+evpn
+  vni 10 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 20 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+
+LEAF - 2
+
+nv overlay evpn
+feature ospf
+feature bgp
+feature pim
+feature fabric forwarding
+feature interface-vlan
+feature vn-segment-vlan-based
+feature lacp
+feature vpc
+feature nv overlay
+
+fabric forwarding anycast-gateway-mac 0000.0000.0001
+ip pim rp-address 1.1.1.1 group-list 225.0.0.0/24 bidir
+ip pim ssm range 232.0.0.0/8
+vlan 1,10,20,100,777
+vlan 10
+  vn-segment 10
+vlan 20
+  vn-segment 20
+vlan 100
+  vn-segment 100
+
+route-map EVPN permit 10
+vrf context KDV
+  vni 100
+  rd auto
+  address-family ipv4 unicast
+    route-target both auto
+    route-target both auto evpn
+vrf context management
+hardware access-list tcam region racl 512
+hardware access-list tcam region arp-ether 256 double-wide
+vpc domain 1
+  peer-keepalive destination 10.0.0.1 source 10.0.0.2
+
+interface Vlan10
+  no shutdown
+  vrf member KDV
+  ip address 192.168.10.1/24
+  fabric forwarding mode anycast-gateway
+
+interface Vlan20
+  no shutdown
+  vrf member KDV
+  ip address 192.168.20.1/24
+  fabric forwarding mode anycast-gateway
+
+interface Vlan100
+  no shutdown
+  vrf member KDV
+  ip forward
+
+interface Vlan777
+  no shutdown
+  ip address 10.10.10.2/30
+  ip router ospf 1 area 0.0.0.0
+  ip pim sparse-mode
+
+interface port-channel1
+  switchport mode trunk
+  spanning-tree port type network
+  vpc peer-link
+
+interface port-channel10
+  switchport mode trunk
+  switchport trunk allowed vlan 1,10,20,100
+  vpc 10
+
+interface port-channel20
+  switchport mode trunk
+  switchport trunk allowed vlan 1,10,20,100
+  vpc 20
+
+interface nve1
+  no shutdown
+  host-reachability protocol bgp
+  source-interface loopback1
+  member vni 10
+    suppress-arp
+    mcast-group 225.0.0.2
+  member vni 20
+    suppress-arp
+    mcast-group 225.0.0.2
+  member vni 100 associate-vrf
+
+interface Ethernet1/1
+  switchport access vlan 20
+
+interface Ethernet1/2
+  switchport mode trunk
+  switchport trunk allowed vlan 1,10,20,100
+  channel-group 10 mode active
+
+interface Ethernet1/3
+  switchport mode trunk
+  switchport trunk allowed vlan 1,10,20,100
+  channel-group 20 mode active
+
+interface Ethernet1/4
+  description VPC PEER LINK
+  switchport mode trunk
+  channel-group 1 mode active
+
+interface Ethernet1/5
+  description VPC PEER LINK
+  switchport mode trunk
+  channel-group 1 mode active
+
+interface mgmt0
+  vrf member management
+  ip address 10.0.0.2/30
+
+interface loopback1
+  ip address 2.2.2.2/32
+  ip address 3.3.3.3/32 secondary
+  ip router ospf 1 area 0.0.0.0
+
+router ospf 1
+  router-id 2.2.2.2
+router bgp 65000
+  router-id 2.2.2.2
+  neighbor 1.1.1.1
+    remote-as 65000
+    update-source loopback1
+    address-family l2vpn evpn
+      send-community
+      send-community extended
+  vrf KDV
+    address-family ipv4 unicast
+      redistribute direct route-map EVPN
+evpn
+  vni 10 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 20 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+
